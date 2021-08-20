@@ -36,9 +36,9 @@ export default class B365Api {
 
         for await (const match of matches) {
             league[match.league] = league[match.league] || []
-            league[match.league].push(match)
+            league[match.league][match.tournament] = league[match.tournament] || []
+            league[match.league][match.tournament].push(match)
         }
-
         return league;
     }
 
