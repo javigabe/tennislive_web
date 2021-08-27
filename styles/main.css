@@ -1,0 +1,207 @@
+.login{
+    position: relative;
+    text-align: center;
+    cursor: pointer;
+  }
+  .register{
+    position: relative;
+    text-align: center;
+    cursor: pointer;
+  }
+  .tennislive{
+      font-size: 25px;
+      font-family: Papyrus;
+      text-align: center;
+  }
+  .match-div {
+      display: flex;
+      min-height: 65px;
+      padding-right: 5px;
+      background-color: #fff;
+      border-bottom: 1px solid #f5f7f9;
+      position: relative;
+  }
+  .match-div:hover {
+      display: flex;
+      min-height: 65px;
+      padding-right: 5px;
+      background-color: #f5f7f9;
+      border-bottom: 1px solid #f5f7f9;
+      transition: background-color .3s ease-in-out,border-color .3s ease-in-out;
+      position: relative;
+  }
+  .match-span {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    padding-left: 5px;
+    overflow: auto hidden;
+    color: inherit;
+    text-decoration: none!important;
+    text-decoration-line: none !important;
+    text-decoration-thickness: initial !important;
+    text-decoration-style: initial !important;
+    text-decoration-color: initial !important;
+    }
+    .match-href {
+        transition: .2s;
+        transition-property: all;
+        transition-duration: 0.2s;
+        transition-timing-function: ease;
+        transition-delay: 0s;
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        padding-left: 5px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        overflow: auto hidden;
+        color: inherit;
+        text-decoration: none!important;
+        padding: 0!important;
+        height: 100%;
+    }
+    .players-div {
+        flex-grow: 1;
+        overflow: visible;
+        font-weight: 400;
+        text-align: center;
+        position: relative;
+        height: inherit;
+        align-items: center;
+    }
+  .player1-div {
+      left: 0%;
+      align-items: center;
+      display: inline-block;
+      margin-left: 5%;
+      position: absolute;
+      vertical-align: middle;
+      top: 50%;
+      transform: translateY(-50%);
+  }
+  .player2-div {
+      align-items: center;
+      display: inline-block;
+      position: absolute;
+      right: 0%;
+      margin-right: 5%;
+      vertical-align: middle;
+      top: 50%;
+      transform: translateY(-50%);
+  }
+  .match-time {
+      position: absolute;
+      align-items: center;
+      display: inline-block;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+  }
+  .player1-img {
+      margin-right: 5px;
+      vertical-align: middle;
+      font-size: 0;
+  
+      height: 40px!important;
+      width: 40px!important;
+  
+      border-radius: 50%;
+      margin-left: 15px;
+  }
+  .player2-img {
+      margin-left: 5px;
+      vertical-align: middle;
+      font-size: 0;
+  
+      height: 40px!important;
+      width: 40px!important;
+  
+      border-radius: 50%;
+  }
+  .player1-text {
+      display: inline-block;
+      vertical-align: middle;
+      overflow: auto;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      align-items: center;
+      text-align: left;
+  }
+  .player2-text {
+      display: inline-block;
+      vertical-align: middle;
+      overflow: auto;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      align-items: center;
+      text-align: right;
+  }
+  .player-name {
+      font-size: 14px;
+      font-family: inherit;
+      text-align: inherit;
+  }
+  .player-surname {
+      font-size: 17px;
+      font-weight: bolder;
+      font-family: Roboto;
+      text-align: inherit;
+  }
+  .sets-scoreboard {
+      position: absolute;
+      display: inline-block;
+      vertical-align: middle;
+      margin-top: 2px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 20px;
+      color: red;
+  }
+  .odds1 {
+      align-items: flex-start;
+      display: inline-block;
+      vertical-align: middle;
+      overflow: auto;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      text-align: right;
+      margin-right: 2px;
+      margin-left: 6px;
+  }
+  .odds2 {
+      align-items: flex-start;
+      display: inline-block;
+      vertical-align: middle;
+      overflow: auto;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      text-align: left;
+      margin-left: 2px;
+      margin-right: 6px;
+  }
+  .wh-icon {
+      align-items: flex-start;
+      display: inline-block;
+      vertical-align: middle;
+      overflow: auto;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      margin: 2px;
+      height: 25px!important;
+      width: 25px!important;
+  }
+
+
+  .matches-menu {
+    display: flex;
+    flex-direction: column;
+    max-width: 900px;
+    margin-left: 10%;
+    background-color: #f5f7f9;
+}
+.sets-text {
+    color: black;
+    margin-top: 0px;
+    font-size: 15px;
+}

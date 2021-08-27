@@ -1,4 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/main.css'
 
 import TennisNavBar from '../components/navbar'
 
