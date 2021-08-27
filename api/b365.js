@@ -15,7 +15,7 @@ export default class B365Api {
         const apiCallResult = await apiCall.json()
 
         const matches = apiCallResult.results
-            .map(async (match) => {
+            .map((match) => {
                 return {
                     id: match.id,
                     player1: match.home.name,
@@ -28,6 +28,12 @@ export default class B365Api {
                 }
             })
             .filter((match) => match.league !== 'ITF')
+            .map(async (match) => {
+                return {
+                    odds: await this.getMatchOdds(match.id),
+                    ...match
+                }
+            });
 
         
         const league = {}
