@@ -20,13 +20,10 @@ export default function Home(props) {
             var name_player2 = player2[0];
             player2.splice(0, 1);
 
-            match.odds = {}
-            match.odds.odds1 = "?"
             if(isNaN(parseFloat(match.odds.odds1))) {
                 // odds1 is not a float   
                 match.odds.odds1 = "?" 
             }
-            match.odds.odds2 = "?" 
             if(isNaN(parseFloat(match.odds.odds2))) {
                 // odds2 is not a float   
                 match.odds.odds2 = "?" 
