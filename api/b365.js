@@ -18,11 +18,10 @@ export default class B365Api {
             .map((match) => {
                 return {
                     id: match.id,
-                    player1: match.home.name,
-                    player2: match.away.name,
+                    player1: {name: match.home.name, img_url: ' '},
+                    player2: {name: match.away.name, img_url: ' '},
                     league: match.league.name.split(" ")[0].toUpperCase(),
                     tournament: match.league.name,
-                    time: convertFromEpoch(match.time),
                     live: true,
                     scoreboard: getScoreboard(match),
                 }
@@ -60,7 +59,7 @@ export default class B365Api {
         const apiCallResult = await apiCall.json()
 
         const matches = apiCallResult.results
-            .map(async (match) => {
+            .map((match) => {
                 return {
                     id: match.id,
                     player1: {name: match.home.name, img_url: ' '},
@@ -79,6 +78,7 @@ export default class B365Api {
                 }
             });
 
+
         const league = {};
 
         for await (const match of matches) {
@@ -86,6 +86,7 @@ export default class B365Api {
             league[match.league][match.tournament] = league[match.league][match.tournament] || []
             league[match.league][match.tournament].push(match)
         }
+
 
         const ordered = Object.keys(league).sort(sortMatches).reduce(
             (obj, key) => { 
@@ -105,11 +106,11 @@ export default class B365Api {
         const apiCallResult = await apiCall.json()
 
         const matches = apiCallResult.results
-            .map(async (match) => {
+            .map((match) => {
                 return {
                     id: match.id,
-                    player1: match.home.name,
-                    player2: match.away.name,
+                    player1: {name: match.home.name, img_url: ' '},
+                    player2: {name: match.away.name, img_url: ' '},
                     league: match.league.name.split(" ")[0].toUpperCase(),
                     tournament: match.league.name,
                     time: convertFromEpoch(match.time),
@@ -143,21 +144,31 @@ export default class B365Api {
 
 
     async getMatchOdds(matchId) {
-        const apiCall = await fetch(`${API_BASE_URL}/v2/event/odds?event_id=${matchId}&odds_market=1&token=${this.token}`)
-        const apiCallResult = await apiCall.json()
+        try {
+            const apiCall = await fetch(`${API_BASE_URL}/v2/event/odds?event_id=${matchId}&odds_market=1&token=${this.token}`)
+            const apiCallResult = await apiCall.json()
 
-        if (!apiCallResult.results.odds['13_1']) {
-            return null;
+            if (!apiCallResult.results.odds['13_1']) {
+                return {
+                    odds1: '?',
+                    odds2: '?',
+                }
+            }
+
+            return {
+                odds1: parseFloat(apiCallResult.results.odds['13_1'][0].home_od).toFixed(2),
+                odds2: parseFloat(apiCallResult.results.odds['13_1'][0].away_od).toFixed(2),
+            }
         }
-
-        return {
-            odds1: parseFloat(apiCallResult.results.odds['13_1'][0].home_od).toFixed(2),
-            odds2: parseFloat(apiCallResult.results.odds['13_1'][0].away_od).toFixed(2),
+        catch (error) {
+            console.log('coutas no capturadas')
+            return {
+                odds1: '?',
+                odds2: '?',
+            }
         }
     }
 
-
-    
 
     async getImgUrl(player) {
         try {
@@ -240,10 +251,27 @@ function getScoreboard(match) {
 
 function convertFromEpoch(time) {
     var myDate = new Date(parseInt(time)*1000);
+
+    var day = myDate.getDate().toLocaleString();
+    var month = (myDate.getMonth()+1).toLocaleString()
+    var hour = myDate.getHours().toLocaleString()
+    var minute = myDate.getMinutes().toLocaleString()
+
+    if (day.length == 1) {
+        day = '0' + day;
+    }
+    if (month.length == 1) {
+        month = '0' + month;
+    }
+    if (hour.length == 1) {
+        hour = '0' + hour;
+    }
+    if (minute.length == 1) {
+        minute = '0' + minute;
+    }
     // DATE IN FORMAT DD/MM HH:MM
-    var date = myDate.getDate().toLocaleString() + '/' + (myDate.getMonth()+1).toLocaleString()
-                + ' ' + myDate.getHours().toLocaleString() + ':' + myDate.getMinutes().toLocaleString()
-    return (date)
+    var date = day + '/' + month + ' ' + hour + ':' + minute;
+    return date;
 }
 
 

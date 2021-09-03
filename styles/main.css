@@ -74,7 +74,7 @@
       left: 0%;
       align-items: center;
       display: inline-block;
-      margin-left: 5%;
+      margin-left: 2%;
       position: absolute;
       vertical-align: middle;
       top: 50%;
@@ -85,7 +85,7 @@
       display: inline-block;
       position: absolute;
       right: 0%;
-      margin-right: 5%;
+      margin-right: 2%;
       vertical-align: middle;
       top: 50%;
       transform: translateY(-50%);
@@ -107,7 +107,7 @@
       width: 40px!important;
   
       border-radius: 50%;
-      margin-left: 15px;
+      margin-left: 10px;
   }
   .player2-img {
       margin-left: 5px;
@@ -118,6 +118,7 @@
       width: 40px!important;
   
       border-radius: 50%;
+      margin-right: 10px;
   }
   .player1-text {
       display: inline-block;
@@ -187,7 +188,7 @@
       overflow: auto;
       white-space: nowrap;
       text-overflow: ellipsis;
-      margin: 2px;
+      margin: 0px;
       height: 25px!important;
       width: 25px!important;
   }
@@ -199,9 +200,49 @@
     max-width: 900px;
     margin-left: 10%;
     background-color: #f5f7f9;
+    padding-top: 10px;
 }
 .sets-text {
     color: black;
     margin-top: 0px;
     font-size: 15px;
+}
+.selection {
+    margin-left: 10%;
+}
+.all-button:hover{
+    font-size: 18px;
+    color: white;
+}
+.all-button:hover{
+    margin-left: 10px;
+    font-size: 20px;
+    color: white;
+    background-color: black;
+    border: 1px solid red;
+}
+.all-button.active{
+    margin-left: 10px;
+    font-size: 20px;
+    color: white;
+    background-color: black;
+    border: 1px solid red;
+}
+.live-button{
+    margin-left: 10px;
+    font-size: 18px;
+}
+.live-button:hover{
+    margin-left: 10px;
+    font-size: 20px;
+    color: white;
+    background-color: black;
+    border: 1px solid red;
+}
+.live-button.active{
+    margin-left: 10px;
+    font-size: 20px;
+    color: white;
+    background-color: black;
+    border: 1px solid red;
 }

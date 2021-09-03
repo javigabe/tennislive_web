@@ -4,6 +4,10 @@ import Accordion from 'react-bootstrap/Accordion'
 import Container from 'react-bootstrap/Container'
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
+import Button from 'react-bootstrap/Button'
+import React, { useState } from 'react';
+
+
 
 import Link from 'next/link'
 
@@ -11,32 +15,38 @@ import Link from 'next/link'
 export default function Home(props) {
     const printMatches = (matches_list) => {
         return matches_list.map((match) => {
-            console.log(match)
-            var player1 = match.player1.split(" ");
+            var player1 = match.player1.name.split(" ");
             var name_player1 = player1[0];
             player1.splice(0, 1);
 
-            var player2 = match.player2.split(" ");
+            var player2 = match.player2.name.split(" ");
             var name_player2 = player2[0];
             player2.splice(0, 1);
 
             if(isNaN(parseFloat(match.odds.odds1))) {
                 // odds1 is not a float   
-                match.odds.odds1 = "?" 
+                match.odds.odds1 = "N/A" 
             }
             if(isNaN(parseFloat(match.odds.odds2))) {
                 // odds2 is not a float   
-                match.odds.odds2 = "?" 
+                match.odds.odds2 = "N/A" 
             }
 
-            var sets1 = match.scoreboard.sets.sets1;
-            var sets2 = match.scoreboard.sets.sets2;
-            if (sets1 === undefined) {
-                sets1 = "?";
+            if (match.live === true) {
+                var sets1 = match.scoreboard.sets.sets1;
+                var sets2 = match.scoreboard.sets.sets2;
+
+                if (sets1 === undefined) {
+                    sets1 = "?";
+                }
+                if (sets2 === undefined) {
+                    sets2 = "?";
+                }
+            } else {
+                var date = match.time.split(" ")[0]
+                var time = match.time.split(" ")[1]
             }
-            if (sets2 === undefined) {
-                sets2 = "?";
-            }
+            
             return (
                 <div className="match-div">
                     <span className="match-span">
@@ -67,6 +77,12 @@ export default function Home(props) {
                                         </div>
                                         {sets1} - {sets2}
                                     </div>
+                                </div>
+                            }
+                            {match.live == false &&
+                                <div>
+                                    {date}<br/>
+                                    {time}
                                 </div>
                             }
                             <div className="player2-div">
@@ -114,15 +130,46 @@ export default function Home(props) {
         )
     }
 
-    var entries = props.tournaments
-    entries = Object.entries(entries)
+    var allEntries = props.allTournaments
+    allEntries = Object.entries(allEntries)
+    
+    const [toUse, setToUse] = React.useState(allEntries);
+    const [liveActive, setLiveActive] = React.useState(false);
+    const [allActive, setAllActive] = React.useState(true);
 
+    const changeToAll = () => {
+        var matches = props.allTournaments;
+        matches = Object.entries(matches);
+
+        setAllActive(true);
+        setLiveActive(false);
+
+        setToUse(matches);
+    };
+
+    const changeToLive = () => {
+        var matches = props.liveTournaments;
+        matches = Object.entries(matches);
+
+        setLiveActive(true);
+        setAllActive(false);
+
+        setToUse(matches);
+    }
+
+    var allClassName = (allActive ? 'active ' : '').concat('all-button')
+    var liveClassName = (liveActive ? 'active ' : '').concat('live-button')
 
     return (
-        <Container className="main">
-            <Container className="mt-5 pt-2 matches-menu">
+        <Container className="mt-5 pt-2 main">
+            <Container className="mb-1 pb-2 selection"> 
+                <Button onClick={() => changeToAll()} variant="outline-primary" className={allClassName}>All</Button>         
+                <Button onClick={() => changeToLive()} variant="outline-primary" className={liveClassName}>Live</Button>
+            </Container>
+            
+            <Container className="matches-menu">
                 <Tabs id="categories" className="mb-3 nav-pills">
-                    {entries.map((tournament) => {
+                    {toUse.map((tournament) => {
                         if (!props.enabledTournaments.includes(tournament[0])) {
                             return ''
                         }
@@ -135,7 +182,6 @@ export default function Home(props) {
                 </Tabs>
             </Container>
         </Container> 
-        
     )
 }
 
@@ -145,13 +191,8 @@ export async function getStaticProps() {
     return {
         props: {
             enabledTournaments: b365api.getEnabledTournaments(),
-            tournaments: await b365api.getLiveTournaments(),
+            liveTournaments: await b365api.getLiveTournaments(),
+            allTournaments: await b365api.getAllTournaments(),
         },
     }
-}
-
-async function getAllTournaments() {
-    const b365api = new B365Api('93709-kVsprdZ0CdjqrA');
-
-
 }
