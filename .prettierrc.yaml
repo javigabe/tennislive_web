@@ -1,0 +1,14 @@
+tabWidth: 4
+trailingComma: es5
+singleQuote: true
+printWidth: 100
+importOrder:
+  - <THIRD_PARTY_MODULES>
+  - ^[./]
+importOrderCaseInsensitive: true
+importOrderParserPlugins:
+  - typescript
+  - classProperties
+  - decorators-legacy
+importOrderSeparation: true
+importOrderSortSpecifiers: true
