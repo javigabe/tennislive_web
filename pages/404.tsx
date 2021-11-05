@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 
-export default function Custom404() {
+export default function Custom404(): ReactElement {
   useEffect(() => {
     window.location.replace('/');
   });
