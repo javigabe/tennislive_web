@@ -1,6 +1,5 @@
 const API_BASE_URL = 'https://api.b365api.com'
 
-
 export default class B365Api {
     constructor(token) {
         this.token = token
@@ -9,6 +8,54 @@ export default class B365Api {
     getEnabledTournaments() {
         return ['ATP', 'WTA', 'CHALLENGER', 'UTR'];
     }
+
+    async getLiveMatchStats(matchId) {
+        const apiCall = await fetch(`${API_BASE_URL}/v1/event/view?token=${this.token}&event_id=${matchId}`)
+        const apiCallResult = await apiCall.json()
+
+        var my_match = {}
+        var match = apiCallResult.results[0]
+        // TODO: HACER QUE SI NO ENCUENTRA UNO DE LOS ELEMENTOS NO SE ROMPA
+        my_match = {
+            id: match.id,
+            player1: {name: match.home.name, img_url: ' '},
+            player2: {name: match.away.name, img_url: ' '},
+            league: match.league.name.split(" ")[0].toUpperCase(),
+            tournament: match.league.name,
+            scoreboard: getScoreboard(match),
+            sets: match.scores,
+            events: match.events,
+        }
+
+        if (match.extra == undefined) {
+            my_match['extra'] = []
+        } else {
+            my_match['extra'] = match.extra
+        }
+
+        if (match.stats == undefined) {
+            my_match['stats'] = [];
+        } else {
+            my_match['stats'] = match.stats;
+        }
+
+        return my_match;
+    }
+
+    async getAllLiveMatchesId() {
+        const apiCall = await fetch(`${API_BASE_URL}/v1/events/inplay?sport_id=13&token=${this.token}`)
+        const apiCallResult = await apiCall.json()
+
+        var ids = []
+
+        const matches = apiCallResult.results
+            .map((match) => {
+                ids.push(match.id);
+            })
+
+        return ids;
+    }
+
 
     async getLiveTournaments() {
         const apiCall = await fetch(`${API_BASE_URL}/v1/events/inplay?sport_id=13&token=${this.token}`)
@@ -100,11 +147,16 @@ export default class B365Api {
     }
 
     async getAllTournaments() {
-        var live = await this.getLiveTournaments()
+        var apiCallResult = ''
+        try {
+            var live = await this.getLiveTournaments()
 
-        const apiCall = await fetch(`${API_BASE_URL}/v2/events/upcoming?sport_id=13&token=${this.token}`)
-        const apiCallResult = await apiCall.json()
-
+            const apiCall = await fetch(`${API_BASE_URL}/v2/events/upcoming?sport_id=13&token=${this.token}`)
+            apiCallResult = await apiCall.json()
+        } catch (error) {
+            return {}
+        }
+        
         const matches = apiCallResult.results
             .map((match) => {
                 return {
@@ -170,18 +222,31 @@ export default class B365Api {
     }
 
 
-    async getImgUrl(player) {
+    async getImgUrl(match) {
         try {
-            const url = "https://api.sofascore.com/api/v1/search/teams/" + player;
-            const apiCall = await fetch(url)
-            const apiCallResult = await apiCall.json()
+            var url = "https://api.sofascore.com/api/v1/search/teams/" + match.player1.name;
+            var apiCall = await fetch(url, {mode:'cors'})
+            var apiCallResult = await apiCall.json()
 
             var id = apiCallResult['teams'][0]['id']
-            var img_url = "https://api.sofascore.com/api/v1/team/" + str(id) + "/image"
-            return img_url
+            var img_url = "https://api.sofascore.com/api/v1/team/" + id.toLocaleString() + "/image"
+            match.player1.img_url = img_url;
         } catch (error) {
-            return ' '
+            match.player1.img_url = ' '
         }
+        try {
+            var url = "https://api.sofascore.com/api/v1/search/teams/" + match.player2.name;
+            var apiCall = await fetch(url, {mode:'cors'})
+            var apiCallResult = await apiCall.json()
+
+            var id = apiCallResult['teams'][0]['id']
+            var img_url = "https://api.sofascore.com/api/v1/team/" + id.toLocaleString() + "/image"
+            match.player2.img_url = img_url;
+        }
+        catch (error) {
+            match.player2.img_url = ' '
+        }
+        return match;
     }
 }
 

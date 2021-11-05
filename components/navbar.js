@@ -7,14 +7,14 @@ export default function TennisNavBar() {
     return (
         <Navbar bg="dark" variant="dark" expand="lg">
             <Container>
-                <Navbar.Brand className="tennislive" href="#home">Tennis Live</Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Brand className="tennislive" href="/">Tennis Live</Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="login">
-                    <Nav.Link href="#home">Login</Nav.Link>
+                <Nav id="loginButton" className="login">
+                    <Nav.Link href="/login">Log In</Nav.Link>
                 </Nav>
-                <Nav className="register">
-                    <Nav.Link href="#home">Register</Nav.Link>
+                <Nav id="registerButton" className="register">
+                    <Nav.Link href="/register">Register</Nav.Link>
                 </Nav>
                 </Navbar.Collapse>
             </Container>

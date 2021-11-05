@@ -5,14 +5,28 @@ import Container from 'react-bootstrap/Container'
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
 import Button from 'react-bootstrap/Button'
-import React, { useState } from 'react';
-
-
-
+import React, { useState, useEffect } from 'react';
+import firebase from "../firebase/clientApp";
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+
+import Nav from 'react-bootstrap/Nav'
+import Navbar from 'react-bootstrap/Navbar'
+
 
 
 export default function Home(props) {
+    var allEntries = props.allTournaments
+    allEntries = Object.entries(allEntries)
+    
+    const [toUse, setToUse] = React.useState(allEntries);
+    const [liveActive, setLiveActive] = React.useState(false);
+    const [allActive, setAllActive] = React.useState(true);
+    const [_document, setDocument] = React.useState(null);
+    const router = useRouter()
+    console.log('VALOR PHOTOS LOADED')
+
+
     const printMatches = (matches_list) => {
         return matches_list.map((match) => {
             var player1 = match.player1.name.split(" ");
@@ -46,12 +60,14 @@ export default function Home(props) {
                 var date = match.time.split(" ")[0]
                 var time = match.time.split(" ")[1]
             }
+
+            var match_url = "/match/live/" + match.id.toString();
             
             return (
-                <div className="match-div">
+                <div className="match-div"  style={{cursor: "pointer"}}>
+                    <Link href={match_url} passHref={true}>
                     <span className="match-span">
-                        <Link href="/" passHref={true}>
-                        <div className="players-div">
+                        <div href="/match/live/1" className="players-div">
                             <div className="player1-div">
                                 <img alt="wh-icon" className="wh-icon"
                                 src="https://images.theabcdn.com/i/24738724/300x300/c"/>
@@ -103,8 +119,8 @@ export default function Home(props) {
                                 src="https://images.theabcdn.com/i/24738724/300x300/c"/>
                             </div>
                         </div>
-                        </Link>
                     </span>
+                    </Link>
                 </div>
             );
         })
@@ -130,13 +146,6 @@ export default function Home(props) {
         )
     }
 
-    var allEntries = props.allTournaments
-    allEntries = Object.entries(allEntries)
-    
-    const [toUse, setToUse] = React.useState(allEntries);
-    const [liveActive, setLiveActive] = React.useState(false);
-    const [allActive, setAllActive] = React.useState(true);
-
     const changeToAll = () => {
         var matches = props.allTournaments;
         matches = Object.entries(matches);
@@ -156,6 +165,80 @@ export default function Home(props) {
 
         setToUse(matches);
     }
+
+    const loadPhotos = async () => {    
+        const b365api = new B365Api('');
+        Object.entries(props.allTournaments).map((category) => {
+            if (!props.enabledTournaments.includes(category[0])) {
+                null;
+            } else {
+                var tournaments = category[1];
+                var newList = []
+                Object.keys(tournaments).map((tournament) => {
+                    var matches_list = tournaments[tournament]
+                    matches_list.map(async (match) => {
+                        match = await b365api.getImgUrl(match);
+                        newList.push(match);
+                    })
+                    category[1][tournament] = newList;
+                })
+            }
+        })
+        console.log(props.allTournaments)
+        setToUse(Object.entries(props.allTournaments));
+    }
+
+    const logOut = () => {
+        firebase.auth().signOut().then(() => {
+            // Sign-out successful.
+            console.log("log out success")
+            router.reload(window.location.pathname)
+        }).catch((error) => {
+            // An error happened.
+            console.log(error)
+          });
+    }
+
+
+    const checkIfUserConnected = () => {
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+              // User is signed in, see docs for a list of available properties
+              // https://firebase.google.com/docs/reference/js/firebase.User
+              var uid = user.uid;
+              //console.log(user.providerId);
+              var loginButton = document.getElementById('loginButton')
+              var registerButton = document.getElementById('registerButton')
+              loginButton.textContent = user.email
+              loginButton.className = "username"
+              loginButton.id = "username"
+
+              var logOutButton = document.createElement('button')
+              logOutButton.className = "log-out-button";
+              //logOutButton.innerHTML = "Log Out"
+              logOutButton.onclick = () => logOut()
+              var span = document.createElement('span')
+              span.className = "sign-out-text"
+              span.textContent = 'Log Out'
+              logOutButton.append(span)
+              
+              registerButton.parentNode.replaceChild(logOutButton, registerButton)
+            } else {
+              // User is signed out
+              // ...
+            }
+          });
+    }
+
+
+    useEffect(() => {
+        console.log('USE EFFECT') 
+        setDocument(document)
+        checkIfUserConnected()
+        //loadPhotos();
+      }, []);
+
+    
 
     var allClassName = (allActive ? 'active ' : '').concat('all-button')
     var liveClassName = (liveActive ? 'active ' : '').concat('live-button')
