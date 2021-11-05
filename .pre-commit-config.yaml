@@ -23,7 +23,3 @@ repos:
         additional_dependencies:
           - 'prettier@2.4.1'
           - '@trivago/prettier-plugin-sort-imports@3.0.0'
-  - repo: https://github.com/sirosen/check-jsonschema
-    rev: 0.6.0
-    hooks:
-      - id: check-github-workflows

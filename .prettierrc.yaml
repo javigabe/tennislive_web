@@ -6,5 +6,9 @@ importOrder:
   - <THIRD_PARTY_MODULES>
   - ^[./]
 importOrderCaseInsensitive: true
+importOrderParserPlugins:
+  - typescript
+  - classProperties
+  - decorators-legacy
 importOrderSeparation: true
 importOrderSortSpecifiers: true
