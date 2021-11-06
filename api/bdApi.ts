@@ -1,27 +1,23 @@
+import { Match } from '../utils/types';
 import B365Api from './b365';
 
 const API_BASE_URL = 'https://scra-320223.ew.r.appspot.com';
 
 export default class BDApi {
-  constructor() {}
-
-  async getMtosByMatch(match_id) {
+  async getMtosByMatch(match_id: string): Promise<Match> {
     const b365api = new B365Api('93709-kVsprdZ0CdjqrA');
-    var match = await b365api.getLiveMatchStats(match_id);
+    const match = await b365api.getLiveMatchStats(match_id);
 
-    var player1 = match.player1.name;
-    var player2 = match.player2.name;
+    const player1 = match.player1.name;
+    const player2 = match.player2.name;
 
     if (player1.indexOf('/') > -1 || player2.indexOf('/') > -1) {
       // ES UN PARTIDO DE DOBLES
-      var response = {
-        match: match,
-      };
 
-      response[player1] = [];
-      response[player2] = [];
+      match['player1']['mtos'] = [];
+      match['player2']['mtos'] = [];
 
-      return response;
+      return match;
     }
 
     const apiCall = await fetch(`${API_BASE_URL}/mtos/${player1}`);
@@ -30,13 +26,9 @@ export default class BDApi {
     const apiCall2 = await fetch(`${API_BASE_URL}/mtos/${player2}`);
     const mtos_player2 = await apiCall2.json();
 
-    var response = {
-      match: match,
-    };
+    match['player1']['mtos'] = mtos_player1;
+    match['player2']['mtos'] = mtos_player2;
 
-    response[player1] = mtos_player1;
-    response[player2] = mtos_player2;
-
-    return response;
+    return match;
   }
 }
