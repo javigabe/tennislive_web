@@ -23,8 +23,8 @@ export default function MatchPage(props: MatchProps) {
   const fillResume = (
     player1: string,
     player2: string,
-    scoreboard: MatchSet | undefined,
-    stats: MatchStats | undefined
+    scoreboard: MatchSet | null,
+    stats: MatchStats | null
   ): ReactElement => {
     return (
       <Tabs id="resumen-tabs" className="mt-2 mb-2">
@@ -40,15 +40,16 @@ export default function MatchPage(props: MatchProps) {
                 </tr>
               </thead>
               <tbody>
-                {Object.keys(scoreboard).map((setn): ReactElement => {
-                  return (
-                    <tr>
-                      <td>Set {setn}</td>
-                      <td>{scoreboard[setn]['home']}</td>
-                      <td>{scoreboard[setn]['away']}</td>
-                    </tr>
-                  );
-                })}
+                {scoreboard !== null &&
+                  Object.keys(scoreboard).map((setn): ReactElement => {
+                    return (
+                      <tr>
+                        <td>Set {setn}</td>
+                        <td>{scoreboard[setn]['home']}</td>
+                        <td>{scoreboard[setn]['away']}</td>
+                      </tr>
+                    );
+                  })}
               </tbody>
             </Table>
           </Container>
@@ -60,7 +61,7 @@ export default function MatchPage(props: MatchProps) {
     );
   };
 
-  const fillStatsTable = (stats: MatchStats | undefined): ReactElement => {
+  const fillStatsTable = (stats: MatchStats | null): ReactElement => {
     if (!stats || Object.keys(stats).length == 0) {
       return <div>No stats recorded</div>;
     }

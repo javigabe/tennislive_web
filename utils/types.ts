@@ -17,7 +17,7 @@ export type Match = {
   time: string;
   scoreboard?: Scoreboard;
   odds?: Odd;
-  sets?: MatchSet;
+  sets: MatchSet | null;
   events?: MatchEvent[];
   extra: string[];
   stats: MatchStats | null;
