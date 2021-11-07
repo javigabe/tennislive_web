@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Tab from 'react-bootstrap/Tab';
@@ -7,15 +7,25 @@ import Tabs from 'react-bootstrap/Tabs';
 
 import B365Api from '../../../api/b365';
 import BDApi from '../../../api/bdApi';
+import { Match, MatchEvent, MatchSet, MatchStats, Mto } from '../../../utils/types';
 
-export default function Match(props) {
+type MatchProps = {
+  match: Match;
+};
+
+export default function MatchPage(props: MatchProps) {
   console.log(props);
 
   useEffect(() => {
     //loadPhotos();
   }, []);
 
-  const fillResume = (player1, player2, scoreboard, stats) => {
+  const fillResume = (
+    player1: string,
+    player2: string,
+    scoreboard: MatchSet | undefined,
+    stats: MatchStats | undefined
+  ): ReactElement => {
     return (
       <Tabs id="resumen-tabs" className="mt-2 mb-2">
         <Tab eventKey="scoreboard" title="Scoreboard">
@@ -30,7 +40,7 @@ export default function Match(props) {
                 </tr>
               </thead>
               <tbody>
-                {Object.keys(scoreboard).map((setn) => {
+                {Object.keys(scoreboard).map((setn): ReactElement => {
                   return (
                     <tr>
                       <td>Set {setn}</td>
@@ -50,9 +60,9 @@ export default function Match(props) {
     );
   };
 
-  const fillStatsTable = (stats) => {
-    if (stats.length == 0) {
-      return 'No stats recorded';
+  const fillStatsTable = (stats: MatchStats | undefined): ReactElement => {
+    if (!stats || Object.keys(stats).length == 0) {
+      return <div>No stats recorded</div>;
     }
     return (
       <Table className="stats-table" borderless responsive size="sm">
@@ -88,9 +98,9 @@ export default function Match(props) {
     );
   };
 
-  const fillMtosTable = (mtos) => {
+  const fillMtosTable = (mtos: Mto[]): ReactElement => {
     if (mtos.length == 0) {
-      return 'No Mtos recorded';
+      return <div>No Mtos recorded</div>;
     }
 
     return (
@@ -119,7 +129,7 @@ export default function Match(props) {
     );
   };
 
-  const fillMtos = (player1, player2, mtos1, mtos2) => {
+  const fillMtos = (player1: string, player2: string, mtos1: Mto[], mtos2: Mto[]): ReactElement => {
     return (
       <Tabs id="mtos" className="mt-2 mb-2">
         <Tab eventKey="player1" title={player1}>
@@ -132,18 +142,20 @@ export default function Match(props) {
     );
   };
 
-  const fillEvents = (events) => {
+  const fillEvents = (events: MatchEvent[]): ReactElement => {
     if (events.length == 0) {
-      return 'No events recorded';
+      return <div>No events recorded</div>;
     }
 
-    return events.reverse().map((event) => {
+    const items = events.reverse().map((event): ReactElement => {
       return <ListGroup.Item>{event.text}</ListGroup.Item>;
     });
+
+    return <>{items}</>;
   };
 
-  var player1 = props.match.player1.name;
-  var player2 = props.match.player2.name;
+  const player1 = props.match.player1.name;
+  const player2 = props.match.player2.name;
 
   return (
     <Container className="app">
@@ -164,7 +176,7 @@ export default function Match(props) {
           <Container className="players-info mt-2">
             <div className="player1-info mt-2">{player1}</div>
             <div className="scoreboard mt-2">
-              {props.match.scoreboard.sets.sets1}-{props.match.scoreboard.sets.sets2}
+              {props.match.scoreboard!.sets.sets1}-{props.match.scoreboard!.sets.sets2}
             </div>
             <div className="player2-info mt-2">{player2}</div>
           </Container>
@@ -178,11 +190,11 @@ export default function Match(props) {
               "Odds"
             </Tab>
             <Tab eventKey="Mtos" title="Mtos">
-              {fillMtos(player1, player2, props.match.player1.mtos, props.match.player2.mtos)}
+              {fillMtos(player1, player2, props.match.player1.mtos!, props.match.player2.mtos!)}
             </Tab>
             <Tab eventKey="Events" title="Events">
               <ListGroup variant="flush" className="match-events">
-                {fillEvents(props.match.events)}
+                {fillEvents(props.match.events!)}
               </ListGroup>
             </Tab>
           </Tabs>
@@ -194,7 +206,7 @@ export default function Match(props) {
 
 export async function getStaticPaths() {
   const b365api = new B365Api('93709-kVsprdZ0CdjqrA');
-  var ids = await b365api.getAllLiveMatchesId();
+  const ids = await b365api.getAllLiveMatchesId();
 
   const paths = ids.map((id) => {
     return {
@@ -208,7 +220,7 @@ export async function getStaticPaths() {
   return { paths: paths, fallback: false };
 }
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps({ params }: { params: { id: string } }) {
   // params.id es el id del partido
   const bdApi = new BDApi();
 

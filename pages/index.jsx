@@ -1,11 +1,9 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Accordion from 'react-bootstrap/Accordion';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
@@ -153,7 +151,7 @@ export default function Home(props) {
     setToUse(matches);
   };
 
-  const loadPhotos = async () => {
+  const _loadPhotos = async () => {
     const b365api = new B365Api('');
     Object.entries(props.allTournaments).map((category) => {
       if (!props.enabledTournaments.includes(category[0])) {
@@ -195,7 +193,7 @@ export default function Home(props) {
       if (user) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/firebase.User
-        var uid = user.uid;
+        var _uid = user.uid;
         //console.log(user.providerId);
         var loginButton = document.getElementById('loginButton');
         var registerButton = document.getElementById('registerButton');

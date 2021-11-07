@@ -8,7 +8,7 @@ import {
   Scoreboard,
   Set,
 } from '../utils/types';
-import { InPlayResponse } from './types';
+import { MatchApiResponse, MatchesListApiResponse } from './types';
 
 const API_BASE_URL = 'https://api.b365api.com';
 
@@ -19,7 +19,7 @@ export default class B365Api {
     this.token = token;
   }
 
-  getEnabledTournaments(): string[] {
+  getEnabledTournaments(): LeagueName[] {
     return ['ATP', 'WTA', 'CHALLENGER', 'UTR'];
   }
 
@@ -28,7 +28,7 @@ export default class B365Api {
       `${API_BASE_URL}/v1/event/view?token=${this.token}&event_id=${matchId}`
     );
 
-    const apiCallResult = await apiCall.json();
+    const apiCallResult = (await apiCall.json()) as MatchApiResponse;
     const match = apiCallResult.results[0];
 
     // TODO: HACER QUE SI NO ENCUENTRA UNO DE LOS ELEMENTOS NO SE ROMPA
@@ -43,23 +43,21 @@ export default class B365Api {
         img_url: '',
       },
       live: true,
-      league: match.league.name.split(' ')[0].toUpperCase(),
+      league: match.league.name.split(' ')[0].toUpperCase() as LeagueName,
       tournament: match.league.name,
       time: convertFromEpoch(match.time),
       scoreboard: getScoreboard(match),
       sets: match.scores,
       events: match.events,
+      extra: [],
+      stats: null,
     };
 
-    if (match.extra == undefined) {
-      my_match.extra = [];
-    } else {
+    if (match.extra !== undefined) {
       my_match.extra = match.extra;
     }
 
-    if (match.stats == undefined) {
-      my_match.stats = {};
-    } else {
+    if (match.stats !== undefined) {
       my_match.stats = match.stats;
     }
 
@@ -81,7 +79,7 @@ export default class B365Api {
 
   async getLiveTournaments(): Promise<PartialRecord<LeagueName, League>> {
     const apiCall = await fetch(`${API_BASE_URL}/v1/events/inplay?sport_id=13&token=${this.token}`);
-    const apiCallResult = (await apiCall.json()) as InPlayResponse;
+    const apiCallResult = (await apiCall.json()) as MatchesListApiResponse;
 
     const matches = apiCallResult.results
       .filter((result) => {
@@ -98,6 +96,8 @@ export default class B365Api {
           live: true,
           scoreboard: getScoreboard(match),
           odds: await this.getMatchOdds(match.id),
+          extra: [],
+          stats: null,
         };
       });
 
@@ -123,7 +123,7 @@ export default class B365Api {
     const apiCall = await fetch(
       `${API_BASE_URL}/v3/events/upcoming?sport_id=13&token=${this.token}`
     );
-    const apiCallResult = (await apiCall.json()) as InPlayResponse;
+    const apiCallResult = (await apiCall.json()) as MatchesListApiResponse;
 
     const matches = apiCallResult.results
       .filter((result) => {
@@ -139,6 +139,8 @@ export default class B365Api {
           time: convertFromEpoch(match.time),
           live: false,
           odds: await this.getMatchOdds(match.id),
+          stats: null,
+          extra: [],
         };
       });
 
@@ -166,7 +168,7 @@ export default class B365Api {
     const apiCall = await fetch(
       `${API_BASE_URL}/v3/events/upcoming?sport_id=13&token=${this.token}`
     );
-    const apiCallResult = (await apiCall.json()) as InPlayResponse;
+    const apiCallResult = (await apiCall.json()) as MatchesListApiResponse;
 
     const matches = apiCallResult.results
       .filter((result) => {
@@ -182,6 +184,8 @@ export default class B365Api {
           time: convertFromEpoch(match.time),
           live: false,
           odds: await this.getMatchOdds(match.id),
+          stats: null,
+          extra: [],
         };
       });
 
@@ -287,7 +291,7 @@ function sortMatches(tournament1: string, tournament2: string): -1 | 0 | 1 {
   return 1;
 }
 
-function getScoreboard(match: InPlayResponse['results'][0]): Scoreboard {
+function getScoreboard(match: MatchesListApiResponse['results'][0]): Scoreboard {
   const scoreboards = match.scores;
   let n_sets = Object.keys(scoreboards).length;
 

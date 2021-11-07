@@ -17,16 +17,17 @@ export type Match = {
   time: string;
   scoreboard?: Scoreboard;
   odds?: Odd;
-  sets?: MatchSet[];
+  sets?: MatchSet;
   events?: MatchEvent[];
-  extra?: string[];
-  stats?: MatchStats;
+  extra: string[];
+  stats: MatchStats | null;
 };
 
 export type Mto = {
   player: string;
   date: string;
   text: string;
+  game: string;
 };
 
 export type Odd = {
@@ -56,12 +57,12 @@ export type Game = {
 };
 
 export type Score = {
-  home: number;
-  away: number;
+  home: string;
+  away: string;
 };
 
 export type MatchSet = {
-  [key: string]: object[];
+  [key: string]: Score;
 };
 
 export type MatchEvent = {
@@ -70,8 +71,8 @@ export type MatchEvent = {
 };
 
 export type MatchStats = {
-  aces?: string[];
-  double_faults?: string[];
-  win_1st_serve?: string[];
-  break_point_conversions?: string[];
+  aces: string[];
+  double_faults: string[];
+  win_1st_serve: string[];
+  break_point_conversions: string[];
 };
