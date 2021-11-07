@@ -177,7 +177,7 @@ export default function MatchPage(props: MatchProps) {
           <Container className="players-info mt-2">
             <div className="player1-info mt-2">{player1}</div>
             <div className="scoreboard mt-2">
-              {props.match.scoreboard!.sets.sets1}-{props.match.scoreboard!.sets.sets2}
+              {props.match.scoreboard.sets.sets1}-{props.match.scoreboard.sets.sets2}
             </div>
             <div className="player2-info mt-2">{player2}</div>
           </Container>

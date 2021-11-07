@@ -98,6 +98,7 @@ export default class B365Api {
           odds: await this.getMatchOdds(match.id),
           extra: [],
           stats: null,
+          sets: null,
         };
       });
 
@@ -141,6 +142,7 @@ export default class B365Api {
           odds: await this.getMatchOdds(match.id),
           stats: null,
           extra: [],
+          sets: null,
         };
       });
 
@@ -186,6 +188,7 @@ export default class B365Api {
           odds: await this.getMatchOdds(match.id),
           stats: null,
           extra: [],
+          sets: null,
         };
       });
 
