@@ -1,13 +1,23 @@
 import { Match } from '../utils/types';
 import B365Api from './b365';
+import { MatchType } from './types';
 
 const API_BASE_URL = 'https://scra-320223.ew.r.appspot.com';
 
 export default class BDApi {
-  async getMtosByMatch(match_id: string): Promise<Match> {
+  async getMtosByMatch(match_id: string, type: MatchType): Promise<Match> {
     const b365api = new B365Api('93709-kVsprdZ0CdjqrA');
-    const match = await b365api.getLiveMatchStats(match_id);
 
+    if (type == 'live') {
+      const match = await b365api.getLiveMatchStats(match_id);
+      return this.getMtos(match);
+    } else {
+      const match = await b365api.getUpComingMatchStats(match_id);
+      return this.getMtos(match);
+    }
+  }
+
+  async getMtos(match: Match): Promise<Match> {
     const player1 = match.player1.name;
     const player2 = match.player2.name;
 

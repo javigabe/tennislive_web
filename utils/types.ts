@@ -15,7 +15,7 @@ export type Match = {
   league: LeagueName;
   tournament: string;
   time: string;
-  scoreboard?: Scoreboard;
+  scoreboard: Scoreboard | null;
   odds?: Odd;
   sets: MatchSet | null;
   events?: MatchEvent[];
@@ -38,7 +38,7 @@ export type Odd = {
 export type Player = {
   name: string;
   img_url: string;
-  mtos?: Mto[];
+  mtos: Mto[] | null;
 };
 
 export type Scoreboard = {

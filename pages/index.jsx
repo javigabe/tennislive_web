@@ -55,7 +55,12 @@ export default function Home(props) {
         var time = match.time.split(' ')[1];
       }
 
-      var match_url = '/match/live/' + match.id.toString();
+      var match_url = '';
+      if (match.live == true) {
+        match_url = '/match/live/' + match.id.toString();
+      } else {
+        match_url = '/match/upcoming/' + match.id.toString();
+      }
 
       return (
         <div className="match-div" style={{ cursor: 'pointer' }}>

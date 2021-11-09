@@ -130,7 +130,15 @@ export default function MatchPage(props: MatchProps) {
     );
   };
 
-  const fillMtos = (player1: string, player2: string, mtos1: Mto[], mtos2: Mto[]): ReactElement => {
+  const fillMtos = (
+    player1: string,
+    player2: string,
+    mtos1: Mto[] | null,
+    mtos2: Mto[] | null
+  ): ReactElement => {
+    if (!mtos1 || !mtos2) {
+      return <>No hay Mtos</>;
+    }
     return (
       <Tabs id="mtos" className="mt-2 mb-2">
         <Tab eventKey="player1" title={player1}>
@@ -155,8 +163,8 @@ export default function MatchPage(props: MatchProps) {
     return <>{items}</>;
   };
 
-  const player1 = props.match.player1.name;
-  const player2 = props.match.player2.name;
+  const player1 = props.match.player1;
+  const player2 = props.match.player2;
 
   return (
     <Container className="app">
@@ -175,23 +183,23 @@ export default function MatchPage(props: MatchProps) {
             />
           </Container>
           <Container className="players-info mt-2">
-            <div className="player1-info mt-2">{player1}</div>
+            <div className="player1-info mt-2">{player1.name}</div>
             <div className="scoreboard mt-2">
-              {props.match.scoreboard.sets.sets1}-{props.match.scoreboard.sets.sets2}
+              {props.match.scoreboard?.sets.sets1}-{props.match.scoreboard?.sets.sets2}
             </div>
-            <div className="player2-info mt-2">{player2}</div>
+            <div className="player2-info mt-2">{player2.name}</div>
           </Container>
         </Container>
         <Container>
           <Tabs id="nav" className="mt-4 mb-3 nav-pills">
             <Tab eventKey="Resume" title="Resume">
-              {fillResume(player1, player2, props.match.sets, props.match.stats)}
+              {fillResume(player1.name, player2.name, props.match.sets, props.match.stats)}
             </Tab>
             <Tab eventKey="Odds" title="Odds">
               "Odds"
             </Tab>
             <Tab eventKey="Mtos" title="Mtos">
-              {fillMtos(player1, player2, props.match.player1.mtos!, props.match.player2.mtos!)}
+              {fillMtos(player1.name, player2.name, player1.mtos, player2.mtos)}
             </Tab>
             <Tab eventKey="Events" title="Events">
               <ListGroup variant="flush" className="match-events">
@@ -227,7 +235,7 @@ export async function getStaticProps({ params }: { params: { id: string } }) {
 
   return {
     props: {
-      match: await bdApi.getMtosByMatch(params.id),
+      match: await bdApi.getMtosByMatch(params.id, 'live'),
     },
   };
 }

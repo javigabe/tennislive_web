@@ -37,10 +37,12 @@ export default class B365Api {
       player1: {
         name: match.home.name,
         img_url: '',
+        mtos: null,
       },
       player2: {
         name: match.away.name,
         img_url: '',
+        mtos: null,
       },
       live: true,
       league: match.league.name.split(' ')[0].toUpperCase() as LeagueName,
@@ -49,6 +51,48 @@ export default class B365Api {
       scoreboard: getScoreboard(match),
       sets: match.scores,
       events: match.events,
+      extra: [],
+      stats: null,
+    };
+
+    if (match.extra !== undefined) {
+      my_match.extra = match.extra;
+    }
+
+    if (match.stats !== undefined) {
+      my_match.stats = match.stats;
+    }
+
+    return my_match;
+  }
+
+  async getUpComingMatchStats(matchId: string): Promise<Match> {
+    const apiCall = await fetch(
+      `${API_BASE_URL}/v1/event/view?token=${this.token}&event_id=${matchId}`
+    );
+
+    const apiCallResult = (await apiCall.json()) as MatchApiResponse;
+    const match = apiCallResult.results[0];
+
+    // TODO: HACER QUE SI NO ENCUENTRA UNO DE LOS ELEMENTOS NO SE ROMPA
+    const my_match: Match = {
+      id: match.id,
+      player1: {
+        name: match.home.name,
+        img_url: '',
+        mtos: null,
+      },
+      player2: {
+        name: match.away.name,
+        img_url: '',
+        mtos: null,
+      },
+      live: false,
+      league: match.league.name.split(' ')[0].toUpperCase() as LeagueName,
+      tournament: match.league.name,
+      time: convertFromEpoch(match.time),
+      scoreboard: null,
+      sets: null,
       extra: [],
       stats: null,
     };
@@ -77,6 +121,21 @@ export default class B365Api {
     return ids;
   }
 
+  async getAllUpcomingMatchesId(): Promise<string[]> {
+    const apiCall = await fetch(
+      `${API_BASE_URL}/v3/events/upcoming?sport_id=13&token=${this.token}`
+    );
+    const apiCallResult = await apiCall.json();
+
+    const ids: string[] = [];
+
+    apiCallResult.results.map((match: Match) => {
+      ids.push(match.id);
+    });
+
+    return ids;
+  }
+
   async getLiveTournaments(): Promise<PartialRecord<LeagueName, League>> {
     const apiCall = await fetch(`${API_BASE_URL}/v1/events/inplay?sport_id=13&token=${this.token}`);
     const apiCallResult = (await apiCall.json()) as MatchesListApiResponse;
@@ -88,8 +147,8 @@ export default class B365Api {
       .map(async (match): Promise<Match> => {
         return {
           id: match.id,
-          player1: { name: match.home.name, img_url: ' ' },
-          player2: { name: match.away.name, img_url: ' ' },
+          player1: { name: match.home.name, img_url: ' ', mtos: null },
+          player2: { name: match.away.name, img_url: ' ', mtos: null },
           league: match.league.name.split(' ')[0].toUpperCase() as LeagueName,
           tournament: match.league.name,
           time: convertFromEpoch(match.time),
@@ -133,8 +192,8 @@ export default class B365Api {
       .map(async (match): Promise<Match> => {
         return {
           id: match.id,
-          player1: { name: match.home.name, img_url: ' ' },
-          player2: { name: match.away.name, img_url: ' ' },
+          player1: { name: match.home.name, img_url: ' ', mtos: null },
+          player2: { name: match.away.name, img_url: ' ', mtos: null },
           league: match.league.name.split(' ')[0].toUpperCase() as LeagueName,
           tournament: match.league.name,
           time: convertFromEpoch(match.time),
@@ -143,6 +202,7 @@ export default class B365Api {
           stats: null,
           extra: [],
           sets: null,
+          scoreboard: null,
         };
       });
 
@@ -179,8 +239,8 @@ export default class B365Api {
       .map(async (match): Promise<Match> => {
         return {
           id: match.id,
-          player1: { name: match.home.name, img_url: ' ' },
-          player2: { name: match.away.name, img_url: ' ' },
+          player1: { name: match.home.name, img_url: ' ', mtos: null },
+          player2: { name: match.away.name, img_url: ' ', mtos: null },
           league: match.league.name.split(' ')[0].toUpperCase() as LeagueName,
           tournament: match.league.name,
           time: convertFromEpoch(match.time),
@@ -189,6 +249,7 @@ export default class B365Api {
           stats: null,
           extra: [],
           sets: null,
+          scoreboard: null,
         };
       });
 

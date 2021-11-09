@@ -93,3 +93,5 @@ export type MatchApiResponse = {
 export type typeOddsResponse = {
   success: number;
 };
+
+export type MatchType = 'live' | 'upcoming';
