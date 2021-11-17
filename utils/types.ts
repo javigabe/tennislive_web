@@ -2,7 +2,7 @@ export type PartialRecord<K extends keyof any, T> = {
   [P in K]?: T;
 };
 
-export type LeagueName = 'ATP' | 'UTR' | 'ITF' | 'WTA' | 'CHALLENGER';
+export type LeagueName = 'ATP' | 'UTR' | 'ITF' | 'WTA' | 'CHALLENGER' | 'ALL';
 export type League = Record<TournamentName, Tournament>;
 export type TournamentName = string;
 export type Tournament = Match[];

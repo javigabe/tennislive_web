@@ -125,9 +125,16 @@ export default function Home(props) {
       <Accordion defaultActiveKey="0">
         {Object.keys(tournaments).map((tournament) => {
           counter++;
+          var tournament_name = tournament;
+          if (tournament.endsWith('MD')) {
+            tournament_name = tournament.replace('MD', 'Doubles');
+          }
+          if (tournament.endsWith('WD')) {
+            tournament_name = tournament.replace('WD', 'Doubles');
+          }
           return (
             <Accordion.Item eventKey={counter.toString()}>
-              <Accordion.Header>{tournament}</Accordion.Header>
+              <Accordion.Header>{tournament_name}</Accordion.Header>
               <Accordion.Body>{printMatches(tournaments[tournament])}</Accordion.Body>
             </Accordion.Item>
           );
@@ -196,26 +203,28 @@ export default function Home(props) {
   const checkIfUserConnected = () => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
-        var _uid = user.uid;
-        //console.log(user.providerId);
-        var loginButton = document.getElementById('loginButton');
-        var registerButton = document.getElementById('registerButton');
-        loginButton.textContent = user.email;
-        loginButton.className = 'username';
-        loginButton.id = 'username';
+        try {
+          // Dentro de bloque try/catch porque pueden ya no existir los
+          // botones de login y register
+          var _uid = user.uid;
+          var loginButton = document.getElementById('loginButton');
+          var registerButton = document.getElementById('registerButton');
+          loginButton.textContent = user.email;
+          loginButton.className = 'username';
+          loginButton.id = 'username';
 
-        var logOutButton = document.createElement('button');
-        logOutButton.className = 'log-out-button';
-        //logOutButton.innerHTML = "Log Out"
-        logOutButton.onclick = () => logOut();
-        var span = document.createElement('span');
-        span.className = 'sign-out-text';
-        span.textContent = 'Log Out';
-        logOutButton.append(span);
+          var logOutButton = document.createElement('button');
+          logOutButton.className = 'log-out-button';
+          logOutButton.onclick = () => logOut();
+          var span = document.createElement('span');
+          span.className = 'sign-out-text';
+          span.textContent = 'Log Out';
+          logOutButton.append(span);
 
-        registerButton.parentNode.replaceChild(logOutButton, registerButton);
+          registerButton.parentNode.replaceChild(logOutButton, registerButton);
+        } catch (e) {
+          console.log(e);
+        }
       } else {
         // User is signed out
         // ...

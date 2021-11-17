@@ -55,13 +55,17 @@ export default function MatchPage(props: MatchProps) {
           </Container>
         </Tab>
         <Tab eventKey="Stats" title="Match stats">
-          {fillStatsTable(stats)}
+          {fillStatsTable(player1, player2, stats)}
         </Tab>
       </Tabs>
     );
   };
 
-  const fillStatsTable = (stats: MatchStats | null): ReactElement => {
+  const fillStatsTable = (
+    player1: string,
+    player2: string,
+    stats: MatchStats | null
+  ): ReactElement => {
     if (!stats || Object.keys(stats).length == 0) {
       return <div>No stats recorded</div>;
     }
@@ -89,7 +93,7 @@ export default function MatchPage(props: MatchProps) {
             <td>{stats['win_1st_serve'][0]}</td>
             <td>{stats['win_1st_serve'][1]}</td>
           </tr>
-          <Container className="stats-info-text">Break points</Container>
+          <Container className="stats-info-text">Break point conversion %</Container>
           <tr>
             <td>{stats['break_point_conversions'][0]}</td>
             <td>{stats['break_point_conversions'][1]}</td>
@@ -151,8 +155,8 @@ export default function MatchPage(props: MatchProps) {
     );
   };
 
-  const fillEvents = (events: MatchEvent[]): ReactElement => {
-    if (events.length == 0) {
+  const fillEvents = (events: MatchEvent[] | undefined): ReactElement => {
+    if (events === undefined || events.length == 0) {
       return <div>No events recorded</div>;
     }
 
@@ -170,27 +174,27 @@ export default function MatchPage(props: MatchProps) {
     <Container className="app">
       <Container className="match">
         <Container className="match-resume">
-          <Container className="match-imgs mt-5">
+          <Container className="player1 mt-5">
             <img
               alt="wh-icon"
               className="player1-match-img"
               src="https://images.theabcdn.com/i/24738724/300x300/c"
             />
+            <div className="player1-info mt-2">{player1.name}</div>
+          </Container>
+          <Container className="live-scoreboard">
+            {props.match.scoreboard?.sets.sets1} - {props.match.scoreboard?.sets.sets2}
+          </Container>
+          <Container className="player2 mt-5">
             <img
               alt="wh-icon"
               className="player2-match-img"
               src="https://images.theabcdn.com/i/24738724/300x300/c"
             />
-          </Container>
-          <Container className="players-info mt-2">
-            <div className="player1-info mt-2">{player1.name}</div>
-            <div className="scoreboard mt-2">
-              {props.match.scoreboard?.sets.sets1}-{props.match.scoreboard?.sets.sets2}
-            </div>
             <div className="player2-info mt-2">{player2.name}</div>
           </Container>
         </Container>
-        <Container>
+        <Container className="match-info">
           <Tabs id="nav" className="mt-4 mb-3 nav-pills">
             <Tab eventKey="Resume" title="Resume">
               {fillResume(player1.name, player2.name, props.match.sets, props.match.stats)}
@@ -203,7 +207,7 @@ export default function MatchPage(props: MatchProps) {
             </Tab>
             <Tab eventKey="Events" title="Events">
               <ListGroup variant="flush" className="match-events">
-                {fillEvents(props.match.events!)}
+                {fillEvents(props.match.events)}
               </ListGroup>
             </Tab>
           </Tabs>

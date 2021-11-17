@@ -38,11 +38,12 @@ export default function SignInScreen() {
       .then((userCredential) => {
         // Signed in
         var user = userCredential.user;
+        user.sendEmailVerification();
         router.push('/');
         // ...
       })
       .catch((error) => {
-        var errorCode = error.code;
+        var _errorCode = error.code;
         var errorMessage = error.message;
         // ..
         console.log(errorMessage);

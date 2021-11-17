@@ -20,7 +20,7 @@ export default class B365Api {
   }
 
   getEnabledTournaments(): LeagueName[] {
-    return ['ATP', 'WTA', 'CHALLENGER', 'UTR'];
+    return ['ATP', 'WTA', 'CHALLENGER', 'UTR', 'ALL'];
   }
 
   async getLiveMatchStats(matchId: string): Promise<Match> {
@@ -142,7 +142,9 @@ export default class B365Api {
 
     const matches = apiCallResult.results
       .filter((result) => {
-        return this.extractLeagueName(result.league.name) !== 'ITF';
+        return (
+          this.getEnabledTournaments().indexOf(this.extractLeagueName(result.league.name)) >= 0
+        );
       })
       .map(async (match): Promise<Match> => {
         return {
@@ -163,10 +165,12 @@ export default class B365Api {
 
     const leagues: PartialRecord<LeagueName, League> = {};
 
+    leagues['ALL'] = { ALL: [] };
     for await (const match of matches) {
       leagues[match.league] = leagues[match.league] || {};
       leagues[match.league]![match.tournament] = leagues[match.league]![match.tournament] || [];
       leagues[match.league]![match.tournament].push(match);
+      leagues['ALL']['ALL'].push(match);
     }
 
     const ordered = Object.keys(leagues)
@@ -187,7 +191,9 @@ export default class B365Api {
 
     const matches = apiCallResult.results
       .filter((result) => {
-        return this.extractLeagueName(result.league.name) !== 'ITF';
+        return (
+          this.getEnabledTournaments().indexOf(this.extractLeagueName(result.league.name)) >= 0
+        );
       })
       .map(async (match): Promise<Match> => {
         return {
@@ -234,7 +240,9 @@ export default class B365Api {
 
     const matches = apiCallResult.results
       .filter((result) => {
-        return this.extractLeagueName(result.league.name) !== 'ITF';
+        return (
+          this.getEnabledTournaments().indexOf(this.extractLeagueName(result.league.name)) >= 0
+        );
       })
       .map(async (match): Promise<Match> => {
         return {
@@ -257,6 +265,8 @@ export default class B365Api {
       live[match.league] = live[match.league] || {};
       live[match.league]![match.tournament] = live[match.league]![match.tournament] || [];
       live[match.league]![match.tournament].push(match);
+      console.log(match);
+      live['ALL']!['ALL'].push(match);
     }
 
     const ordered = Object.keys(live)
@@ -331,6 +341,12 @@ function sortMatches(tournament1: string, tournament2: string): -1 | 0 | 1 {
   if (tournament1.localeCompare(tournament2) == 0) {
     // SON EL MISMO TORNEO
     return 0;
+  }
+  if (tournament1.startsWith('ALL')) {
+    return -1;
+  }
+  if (tournament2.startsWith('ALL')) {
+    return 1;
   }
   if (tournament1.startsWith('ATP')) {
     return -1;
