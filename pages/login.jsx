@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useState } from 'react';
+import Container from 'react-bootstrap/Container';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -26,12 +27,12 @@ export default function SignInScreen() {
       .signInWithEmailAndPassword(email, password)
       .then((userCredential) => {
         // Signed in
-        var user = userCredential.user;
+        var _user = userCredential.user;
         router.push('/');
         // ...
       })
       .catch((error) => {
-        var errorCode = error.code;
+        var _errorCode = error.code;
         var errorMessage = error.message;
         // ..
         console.log(errorMessage);
@@ -43,24 +44,49 @@ export default function SignInScreen() {
 
   return (
     <div className="log-in-app">
-      <div>
-        <h4>Choose an option to Log In</h4>
+      <Container class="email-register">
+        <h1>Login</h1>
+        <p>Choose an option to Log In.</p>
+        <hr />
+
+        <label for="email">
+          <b>Email</b>
+        </label>
         <input
           type="email"
-          className="input_text"
-          placeholder="Email"
+          placeholder="Enter Email"
+          name="email"
+          id="email"
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
-        <br />
+
+        <label for="psw">
+          <b>Password</b>
+        </label>
         <input
           type="password"
-          className="input_text"
-          placeholder="Password"
+          placeholder="Enter Password"
+          name="psw"
+          id="psw"
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
-        <br />
-        <button onClick={() => signIn(email, password)}>Log In</button>
-      </div>
+
+        <button onClick={() => signIn(email, password)} class="registerbtn">
+          Log In
+        </button>
+      </Container>
+
+      <Container class="email-register signin">
+        <p>
+          Forgot your password?{' '}
+          <a className="already-have-account" href="#">
+            Recover password
+          </a>
+          .
+        </p>
+      </Container>
 
       <StyledFirebaseAuth
         className="registerUI"

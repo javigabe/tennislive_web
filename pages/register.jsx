@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useState } from 'react';
+import Container from 'react-bootstrap/Container';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -76,30 +77,62 @@ export default function SignInScreen() {
         />
       </div>
 
-      <div className="emailRegister" style={{ display: showEmail }}>
+      <Container class="email-register" style={{ display: showEmail }}>
+        <h1>Register</h1>
+        <p>Please fill in this form to create an account.</p>
+        <hr />
+
+        <label for="email">
+          <b>Email</b>
+        </label>
         <input
           type="email"
-          className="input_text"
-          placeholder="Email"
+          placeholder="Enter Email"
+          name="email"
+          id="email"
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
-        <br />
+
+        <label for="psw">
+          <b>Password</b>
+        </label>
         <input
           type="password"
-          className="input_text"
-          placeholder="Password"
+          placeholder="Enter Password"
+          name="psw"
+          id="psw"
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
-        <br />
+
+        <label for="psw-repeat">
+          <b>Repeat Password</b>
+        </label>
         <input
           type="password"
-          className="input_text"
-          placeholder="Confirm Password"
+          placeholder="Repeat Password"
+          name="psw-repeat"
+          id="psw-repeat"
           onChange={(e) => setConfirmPassword(e.target.value)}
+          required
         />
-        <br />
-        <button onClick={() => createUser(email, password, confirmPassword)}>Register</button>
-      </div>
+        <hr />
+
+        <button onClick={() => createUser(email, password, confirmPassword)} class="registerbtn">
+          Register
+        </button>
+      </Container>
+
+      <Container class="email-register signin">
+        <p>
+          Already have an account?{' '}
+          <a className="already-have-account" href="/login">
+            Sign in
+          </a>
+          .
+        </p>
+      </Container>
     </div>
   );
 }
